@@ -43,7 +43,7 @@
   - name: copying mongo.repo
     copy:
       src: mongo.repo
-      dest: /etc/yum.repos.d/mongo.
+      dest: /etc/yum.repos.d/mongo.repo
   - name: install mongodb-org-shell
     yum:
       name: mongodb-org-shell
