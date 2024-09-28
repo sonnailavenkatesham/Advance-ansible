@@ -19,7 +19,7 @@
   - name: download and unzip the artifact
     unarchive:
       src: https://roboshop-builds.s3.amazonaws.com/web.zip
-      path: /usr/share/nginx/html/
+      dest: /usr/share/nginx/html/
       remote_src: yes
   - name: copying roboshop.conf
     copy:
