@@ -1,0 +1,52 @@
+- name: Catalogue Setup
+  hosts: catalogue
+  become: yes
+
+  tasks:
+  - name: disable the nodejs modules
+    shell: "{{ item }}"
+    loop: 
+    - dnf module disable nodejs -y
+    - dnf module enable nodejs:18 -y 
+  - name: install nodejs
+    yum:
+      name: nodejs
+      state: installed
+  - name: creating user roboshop
+    user:
+      name: roboshop
+  - name: creating a app directory
+    file:
+      path: /app
+      state: directory
+  - name: downloading and unzipping catalogue artifact
+    unarchive:
+      src: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+      path: /app
+      remote_src: yes
+  - name: npm install
+    shell: npm install
+    args:
+      chdir: /app
+  - name: copying catalogue.service
+    copy:
+      src: catalogue.service
+      dest: /etc/systemd/system/catalogue.service
+  - name: daemon-reload
+    systemd_service:
+      daemon_reload: true
+  - name: enable and start catalogue
+    service:
+      name: catalogue
+      state: started
+      enabled: true
+  - name: copying mongo.repo
+    copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.
+  - name: install mongodb-org-shell
+    yum:
+      name: mongodb-org-shell
+      state: installed
+  - name: load schema
+    shell: mongo --host MONGODB-SERVER-IPADDRESS </app/schema/catalogue.js
