@@ -5,7 +5,7 @@
   tasks:
   - name: copyong mongo.repo
     copy:
-      ser: mongo.repo
+      src: mongo.repo
       dest: /etc/yum.repos.d/mongo.repo
   - name: install mongodb-org
     yum:
