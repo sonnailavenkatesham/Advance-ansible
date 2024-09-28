@@ -49,4 +49,4 @@
       name: mongodb-org-shell
       state: installed
   - name: load schema
-    shell: mongo --host MONGODB-SERVER-IPADDRESS </app/schema/catalogue.js
+    shell: mongo --host 184.72.188.233 </app/schema/catalogue.js
