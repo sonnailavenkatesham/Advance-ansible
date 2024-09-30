@@ -31,7 +31,7 @@
     src: shipping.service
     dest: /etc/systemd/system/shipping.service
 
-- name: daemon-reload:
+- name: daemon-reload
   systemd_service:
     daemon_reload: true
 
@@ -47,7 +47,7 @@
     state: installed
 
 - name: settingup userroot
-  shell: mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pRoboShop@1 < /app/schema/shipping.sql 
+  shell: mysql -h 54.152.93.189 -uroot -pRoboShop@1 < /app/schema/shipping.sql 
 
 - name: restarting shipping
   service:
