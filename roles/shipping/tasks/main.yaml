@@ -24,7 +24,7 @@
     chdir: /app
 
 - name: renaming target/shipping-1.0.jar shipping.jar
-  shell: mv target/shipping-1.0.jar shipping.jar
+  shell: mv /app/target/shipping-1.0.jar shipping.jar
 
 - name: copying shipping service
   copy:
