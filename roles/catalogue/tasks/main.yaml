@@ -7,7 +7,7 @@
   unarchive:
     src: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
     dest: /app
-    remote_sec: yes
+    remote_src: yes
 - name: npm 
   import_role:
     name: common
