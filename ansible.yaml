@@ -1,0 +1,5 @@
+- name: Roboshop project
+  hosts: "{{component}}"
+  become: yes
+  roles:
+  - "{{component}}"

@@ -1,0 +1,24 @@
+- name: repo file as a rpm
+  yum:
+    name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y
+    state: installed
+
+- name: Enable Redis 6.2 from package
+  shell: dnf module enable redis:remi-6.2 -y
+
+- name: installing redis
+  yum:
+    name: redis
+    state: installed
+
+- name: address from 127.0.0.1 to 0.0.0.0 in /etc/redis.conf
+  replace:
+    path: /etc/redis.conf
+    regexp: '127.0.0.1'
+    replace: '0.0.0.0'
+
+- name: enable and start redis
+  service:
+    name: redis
+    state: started
+    enabled: true

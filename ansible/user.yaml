@@ -1,0 +1,53 @@
+---
+- name: User component setup
+  hosts: user
+  become: yes
+
+  tasks:
+  - name: nodejs module setup
+    shell: "{{ item }}"
+    loop:
+    - dnf module disable nodejs -y
+    - dnf module enable nodejs:18 -y
+  - name: isntall nodejs
+    yum:
+      name: nodejs
+      state: installed
+  - name: adding user roboshop
+    user:
+      name: roboshop
+  - name: creating app directory
+    file:
+      path: /app
+      state: directory
+  - name: downloading and unzipping user artifact
+    unarchive:
+      src: https://roboshop-builds.s3.amazonaws.com/user.zip
+      dest: /app
+      remote_src: yes
+  - name: npm install 
+    shell: npm install 
+    args:
+      chdir: /app
+  - name: copying user.service
+    copy:
+      src: user.service
+      dest: /etc/systemd/system/user.service
+  - name: daemon-reload
+    systemd_service:
+      daemon_reload: true
+  - name: enable and start user
+    service:
+      name: user
+      state: started
+      enabled: true
+  - name: copying mongo.repo
+    copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+  - name: install mongodb-org-shell
+    yum:
+      name: mongodb-org-shell
+      state: installed
+  - name: loading user schema
+    shell: mongo --host MONGODB-SERVER-IPADDRESS </app/schema/user.js

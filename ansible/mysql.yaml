@@ -1,0 +1,23 @@
+---
+- name: MYSQL DataBase Setup
+  hosts: mysql
+  become: yes
+
+  tasks:
+  - name: module disable mysql
+    shell: dnf module disable mysql -y
+  - name: copy mysql.repo
+    copy:
+      src: mysql.repo
+      dest: /etc/yum.repos.d/mysql.repo
+  - name: installing mysql-community-server
+    yum:
+      name: mysql-community-server
+      state: installed
+  - name: enable and start mysql service
+    service:
+      name: mysqld
+      state: started
+      enabled: true
+  - name: changing default password
+    shell: mysql_secure_installation --set-root-pass RoboShop@1

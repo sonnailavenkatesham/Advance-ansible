@@ -1,0 +1,26 @@
+- name: installing nginx
+  yum:
+    name: nginx
+    state: installed
+    
+- name: remove deafult html folder
+  file:
+    path: /usr/share/nginx/html/*
+    state: absent
+
+- name: create deafult html folder
+  file:
+    path: /usr/share/nginx/html/
+    state: present
+
+- name: download and unaipping web artifact
+  unarchive:
+    src: https://roboshop-builds.s3.amazonaws.com/web.zip
+    dest: /usr/share/nginx/html/
+    remote_src: yes
+
+- name: Deploy roboshop configuration file from template 
+  template:
+    src: roboshop.conf
+    dest: /etc/nginx/default.d/roboshop.conf 
+  notify: Restart Nginx

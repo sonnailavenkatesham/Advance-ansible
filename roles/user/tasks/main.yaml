@@ -1,0 +1,43 @@
+- name: nodejs setup
+  import_role:
+    name: common
+    tasks_from: nodejs-setup
+
+- name: download and unzipping user artifact
+  unarchive:
+    src: https://roboshop-builds.s3.amazonaws.com/user.zip
+    dest: /app
+    remote_src: yes
+
+- name: npm install
+  import_role:
+    name: common
+    tasks_from: npm-install
+
+- name: copying user service
+  copy:
+    src: user.service
+    dest: /etc/systemd/system/user.service
+
+- name: daemon-reload
+  systemd_service:
+    daemon-reload: true
+
+- name: enable and start user
+  service:
+    name: user
+    state: started
+    enabled: true
+
+- name: copying mongo.repo
+  copy:
+    src: mongo.repo
+    dest: /etc/yum.repos.d/mongo.repo
+
+- name: installing mongodb-org-shell
+  yum:
+    name: mongodb-org-shell
+    state: installed
+
+- name: loading schema
+  shell: mongo --host 35.173.230.224 </app/schema/user.js

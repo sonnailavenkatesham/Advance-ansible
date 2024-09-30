@@ -1,0 +1,30 @@
+- name: nodejs setup
+  import_role:
+    name: common
+    tasks_from: nodejs-setup
+
+- name: download and unzipping cart artifact
+  unarchive:
+    src: https://roboshop-builds.s3.amazonaws.com/cart.zip
+    dest: /app
+    remote_src: yes
+
+- name: npm install
+  import_role:
+    name: common
+    tasks_from: npm-install
+
+- name: copying cart service
+  copy:
+    src: cart.service
+    dest: /etc/systemd/system/cart.service
+
+- name: daemon-reload
+  systemd_service:
+    daemon-reload: true
+
+- name: enable and start cart
+  service:
+    name: cart
+    state: started
+    enabled: true

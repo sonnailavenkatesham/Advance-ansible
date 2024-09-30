@@ -1,0 +1,26 @@
+---
+- name: Redis DataBase setup
+  hosts: redis
+  become: yes
+
+  tasks:
+  - name: install rpm repo file
+    yum: 
+      name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y
+      state: present
+  - name: Enable Redis 6.2 module
+    shell: dnf module enable redis:remi-6.2 -y
+  - name: install redis
+    yum:
+      name: redis
+      state: installed
+  - name: replace from 127.0.0.1 to 0.0.0.0 in /etc/redis.conf 
+    replace:
+      path: /etc/redis.conf
+      regexp: '127.0.0.1'
+      replace: '0.0.0.0'
+  - name: enable and start redis
+    service:
+      name: redis
+      state: started
+      enabled: true

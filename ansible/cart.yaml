@@ -1,0 +1,43 @@
+---
+- name: Cart component setup
+  hosts: cart
+  become: yes
+
+  tasks:
+  - name: nodejs modules setup
+    shell: "{{ item }}"
+    loop:
+    - dnf module disable nodejs -y
+    - dnf module enable nodejs:18 -y
+  - name: installing nodejs
+    yum:
+      name: nodejs
+      state: installed
+  - name: adding user roboshop
+    user:
+      name: roboshop
+  - name: creating app directory
+    file:
+      path: /app
+      state: directory
+  - name: downloading and unzipping cart artifact
+    unarchive:
+      src: https://roboshop-builds.s3.amazonaws.com/cart.zip
+      dest: /app
+      remote_src: yes
+  - name: npm install 
+    shell: npm install 
+    args:
+      chdir: /app
+  - name: copying cart.service
+    copy:
+      src: cart.service
+      dest: /etc/systemd/system/cart.service
+  - name: daemon-reaload
+    systemd_service:
+      daemon_reload: true
+  - name: enable and start cart 
+    service:
+      name: cart
+      state: started
+      enabled: true

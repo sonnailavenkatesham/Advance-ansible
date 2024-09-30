@@ -1,0 +1,19 @@
+- name: disable nodejs and enable 18 version
+  shell: "{{ item }}"
+  loop:
+  - dnf module disable nodejs -y
+  - dnf module enable nodejs:18 -y
+
+- name: installing nodejs
+  yum:
+    name: nodejs
+    state: installed
+
+- name: adding user robshop
+  user:
+    name: roboshop
+
+- name: adding app directory
+  file:
+    path: /app
+    state: directory

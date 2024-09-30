@@ -1,0 +1,4 @@
+- name: npm install
+  shell: npm install
+  args:
+    chdir: /app
