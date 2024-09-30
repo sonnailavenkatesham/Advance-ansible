@@ -1,0 +1,21 @@
+- name: application needs MySQL 5.7. So lets disable MySQL 8 version
+  shell: yum module disable mysql -y 
+
+- name: copying mysql repo
+  copy:
+    src: mysql.repo
+    dest: /etc/yum.repos.d/mysql.repo
+
+- name: installing mysql-community-server
+  yum:
+    name: mysql-community-server
+    state: installed
+
+- name: enable and start mysqld
+  service:
+    name: mysqld
+    state: started
+    enabled: true
+
+- name: settingup root password
+  shell: mysql_secure_installation --set-root-pass RoboShop@1

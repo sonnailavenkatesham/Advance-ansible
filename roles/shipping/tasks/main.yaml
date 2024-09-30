@@ -1,0 +1,56 @@
+- name: installing maven 
+  yum:
+    name: maven
+    state: installed
+
+- name: adding user roboshop
+  user:
+    name: roboshop
+
+- name: creating app directory
+  file:
+    path: /app
+    state: directory
+
+- name: downloading and unzipping shpping artifact
+  unarchive:
+    src: https://roboshop-builds.s3.amazonaws.com/shipping.zip
+    dest: /app
+    remote_src: yes
+
+- name: mvn clean package
+  shell: mvn clean package
+  args:
+    chdir: /app
+
+- name: renaming target/shipping-1.0.jar shipping.jar
+  shell: mv target/shipping-1.0.jar shipping.jar
+
+- name: copying shipping service
+  copy:
+    src: shipping.service
+    dest: /etc/systemd/system/shipping.service
+
+- name: daemon-reload:
+  systemd_service:
+    daemon_reload: true
+
+- name: enable and start shipping
+  service:
+    name: shipping
+    state: started
+    enabled: true
+  
+- name: installing mysql 
+  yum:
+    name: mysql
+    state: installed
+
+- name: settingup userroot
+  shell: mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pRoboShop@1 < /app/schema/shipping.sql 
+
+- name: restarting shipping
+  service:
+    name: shipping
+    state: restarted
+
